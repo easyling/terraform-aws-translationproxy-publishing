@@ -1,6 +1,9 @@
 resource "aws_cloudfront_distribution" "translations_at_root" {
   count   = length(var.domain_to_locale)
   enabled = true
+  aliases = [
+    var.domain_to_locale[count.index].target,
+  ]
   default_cache_behavior {
     allowed_methods = [
       "GET",
@@ -71,6 +74,9 @@ resource "aws_cloudfront_distribution" "translations_at_root" {
 resource "aws_cloudfront_distribution" "translation_at_prefix" {
   count   = length(var.prefix_to_locale)
   enabled = true
+  aliases = [
+    var.source_domain,
+  ]
   default_cache_behavior {
     allowed_methods = [
       "GET",
