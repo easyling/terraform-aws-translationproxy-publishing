@@ -1,5 +1,5 @@
 variable "domain_to_locale" {
-  description = "List of published language objects. The two attributes are `domain` for the target language domain, and `locale` for the locale code. MUST be given as list of two-by-two letter locales."
+  description = "List of published language objects. The two attributes are `target` for the target language domain, and `locale` for the locale code. MUST be given as list of two-by-two letter locales."
   type = list(object({
     target = string
     locale = string
@@ -7,12 +7,13 @@ variable "domain_to_locale" {
   default = []
 }
 variable "source_domain" {
-  description = "The original domain of the site"
+  description = "The original domain of the site. Used to create the route for the root and set configuration during subdirectory publishing"
   type        = string
   default     = ""
 }
 variable "prefix_to_locale" {
-  default = []
+  description = "List of published language objects. The two attributes are `target` for the path prefix, and `locale` for the locale code. MUST be given as list of two-by-two letter locales."
+  default     = []
   type = list(object({
     target = string
     locale = string
@@ -20,7 +21,7 @@ variable "prefix_to_locale" {
 }
 
 variable "project" {
-  description = "The project ID"
+  description = "The project ID provided by the LSP"
   type        = string
 }
 variable "app_domain" {
