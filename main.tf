@@ -72,7 +72,7 @@ resource "aws_cloudfront_distribution" "translations_at_root" {
 }
 
 resource "aws_cloudfront_distribution" "translation_at_prefix" {
-  count   = length(var.prefix_to_locale)
+  count   = length(var.prefix_to_locale) > 0 ? 1 : 0
   enabled = true
   aliases = [
     var.source_domain,
