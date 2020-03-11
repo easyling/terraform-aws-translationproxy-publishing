@@ -1,5 +1,5 @@
 resource "aws_cloudfront_distribution" "translations_at_root" {
-  count = length(var.locales)
+  count   = length(var.domain_to_locale)
   enabled = true
   default_cache_behavior {
     allowed_methods = [
@@ -15,7 +15,7 @@ resource "aws_cloudfront_distribution" "translations_at_root" {
       "HEAD",
       "OPTIONS",
     ]
-    target_origin_id = "translationproxy-${var.locales[count.index].language}"
+    target_origin_id       = "translationproxy-${var.domain_to_locale[count.index].locale}"
     viewer_protocol_policy = "allow-all"
     forwarded_values {
       query_string = true
@@ -34,24 +34,24 @@ resource "aws_cloudfront_distribution" "translations_at_root" {
   }
 
   origin {
-    domain_name = "${var.locales[count.index].language}.${var.project}.${var.app_domain}"
-    origin_id = "translationproxy-${var.locales[count.index].language}"
+    domain_name = "${var.domain_to_locale[count.index].locale}.${var.project}.${var.app_domain}"
+    origin_id   = "translationproxy-${var.domain_to_locale[count.index].locale}"
 
     custom_header {
-      name = "X-TranslationProxy-Cache-Info"
+      name  = "X-TranslationProxy-Cache-Info"
       value = "disable"
     }
     custom_header {
-      name = "X-TranslationProxy-EnableDeepRoot"
+      name  = "X-TranslationProxy-EnableDeepRoot"
       value = "false"
     }
     custom_header {
-      name = "X-TranslationProxy-AllowRobots"
+      name  = "X-TranslationProxy-AllowRobots"
       value = "true"
     }
     custom_header {
-      name = "X-TranslationProxy-ServingDomain"
-      value = var.locales[count.index].domain
+      name  = "X-TranslationProxy-ServingDomain"
+      value = var.domain_to_locale[count.index].target
     }
   }
 
@@ -62,14 +62,14 @@ resource "aws_cloudfront_distribution" "translations_at_root" {
   }
 
   viewer_certificate {
-    acm_certificate_arn = var.acm_cert_arn
+    acm_certificate_arn      = var.acm_cert_arn
     minimum_protocol_version = "TLSv1.1_2016"
-    ssl_support_method = "sni-only"
+    ssl_support_method       = "sni-only"
   }
 }
 
 resource "aws_cloudfront_distribution" "translation_at_prefix" {
-  count = length(var.prefix_to_language)
+  count   = length(var.prefix_to_locale)
   enabled = true
   default_cache_behavior {
     allowed_methods = [
@@ -85,7 +85,7 @@ resource "aws_cloudfront_distribution" "translation_at_prefix" {
       "HEAD",
       "OPTIONS",
     ]
-    target_origin_id = "origin"
+    target_origin_id       = "origin"
     viewer_protocol_policy = "allow-all"
     forwarded_values {
       query_string = true
@@ -105,37 +105,37 @@ resource "aws_cloudfront_distribution" "translation_at_prefix" {
 
   origin {
     domain_name = var.source_domain
-    origin_id = "origin"
+    origin_id   = "origin"
   }
 
   dynamic "origin" {
-    for_each = var.prefix_to_language
+    for_each = var.prefix_to_locale
     iterator = prefix
     content {
-      domain_name = "${prefix.value.language}.${var.project}.${var.app_domain}"
-      origin_id = "translationproxy-${prefix.value.language}"
+      domain_name = "${prefix.value.locale}.${var.project}.${var.app_domain}"
+      origin_id   = "translationproxy-${prefix.value.locale}"
 
-        custom_header {
-          name = "X-TranslationProxy-Cache-Info"
-          value = "disable"
-        }
-        custom_header {
-          name = "X-TranslationProxy-EnableDeepRoot"
-          value = "false"
-        }
-        custom_header {
-          name = "X-TranslationProxy-AllowRobots"
-          value = "true"
-        }
-        custom_header {
-          name = "X-TranslationProxy-ServingDomain"
-          value = var.source_domain
-        }
+      custom_header {
+        name  = "X-TranslationProxy-Cache-Info"
+        value = "disable"
+      }
+      custom_header {
+        name  = "X-TranslationProxy-EnableDeepRoot"
+        value = "true"
+      }
+      custom_header {
+        name  = "X-TranslationProxy-AllowRobots"
+        value = "true"
+      }
+      custom_header {
+        name  = "X-TranslationProxy-ServingDomain"
+        value = var.source_domain
+      }
     }
   }
   dynamic "ordered_cache_behavior" {
-    for_each = var.prefix_to_language
-    iterator = path_object
+    for_each = var.prefix_to_locale
+    iterator = prefix
 
     content {
       allowed_methods = [
@@ -168,9 +168,9 @@ resource "aws_cloudfront_distribution" "translation_at_prefix" {
       }
 
       viewer_protocol_policy = "allow-all"
-      path_pattern = path_object.value.prefix
+      path_pattern           = prefix.value.target
 
-      target_origin_id = "translationproxy-${path_object.value.language}"
+      target_origin_id = "translationproxy-${prefix.value.locale}"
     }
   }
 
@@ -181,8 +181,8 @@ resource "aws_cloudfront_distribution" "translation_at_prefix" {
   }
 
   viewer_certificate {
-    acm_certificate_arn = var.acm_cert_arn
+    acm_certificate_arn      = var.acm_cert_arn
     minimum_protocol_version = "TLSv1.1_2016"
-    ssl_support_method = "sni-only"
+    ssl_support_method       = "sni-only"
   }
 }
