@@ -11,6 +11,13 @@ variable "source_domain" {
   type = string
   default = ""
 }
+variable "prefix_to_language" {
+  default = []
+  type        = list(object({
+    prefix = string
+    language = string
+  }))
+}
 
 variable "project" {
   description = "The project ID"
