@@ -115,6 +115,7 @@ resource "aws_cloudfront_distribution" "translation_at_prefix" {
     cached_methods = [
       "GET",
       "HEAD",
+      "OPTIONS",
     ]
     target_origin_id = "origin"
     viewer_protocol_policy = "allow-all"
@@ -232,9 +233,9 @@ resource "aws_cloudfront_distribution" "translation_at_prefix" {
   }
 
   viewer_certificate {
-    acm_certificate_arn = var.acm_cert_arn
+    acm_certificate_arn      = var.acm_cert_arn
     minimum_protocol_version = "TLSv1.1_2016"
-    ssl_support_method = "sni-only"
+    ssl_support_method       = "sni-only"
   }
 }
 
