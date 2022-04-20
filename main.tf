@@ -29,7 +29,7 @@ resource "aws_cloudfront_distribution" "translations_at_root" {
     target_origin_id = "translationproxy-${var.domain_to_locale[count.index].locale}"
     viewer_protocol_policy = "allow-all"
     forwarded_values {
-      query_string = false
+      query_string = var.forward_query_strings
       cookies {
         forward = "all"
       }

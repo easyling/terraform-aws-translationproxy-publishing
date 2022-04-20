@@ -33,3 +33,8 @@ variable "acm_cert_arn" {
   description = "ARN of the dynamic certificate provisioned by AWS. Can be left empty, in which case HTTPS will not work!"
   default     = ""
 }
+variable "forward_query_strings" {
+  description = "Forward query strings to Easyling. CAUTION: may decrease effectiveness of caching, and lead to greater traffic numbers."
+  default = false
+  type = bool
+}
