@@ -234,7 +234,7 @@ resource "aws_cloudfront_distribution" "translation_at_prefix" {
 
   viewer_certificate {
     acm_certificate_arn      = var.acm_cert_arn
-    minimum_protocol_version = "TLSv1.1_2016"
+    minimum_protocol_version = var.min_tls_version
     ssl_support_method       = "sni-only"
   }
 }
