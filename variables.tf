@@ -1,6 +1,6 @@
 variable "domain_to_locale" {
   description = "List of published language objects. The two attributes are `target` for the target language domain, and `locale` for the locale code. MUST be given as list of two-by-two letter locales."
-  type = list(object({
+  type        = list(object({
     target = string
     locale = string
   }))
@@ -14,7 +14,7 @@ variable "source_domain" {
 variable "prefix_to_locale" {
   description = "List of published language objects. The two attributes are `target` for the path prefix, and `locale` for the locale code. MUST be given as list of two-by-two letter locales."
   default     = []
-  type = list(object({
+  type        = list(object({
     target = string
     locale = string
     origin = bool
@@ -35,6 +35,12 @@ variable "acm_cert_arn" {
 }
 variable "forward_query_strings" {
   description = "Forward query strings to Easyling. CAUTION: may decrease effectiveness of caching, and lead to greater traffic numbers."
-  default = false
-  type = bool
+  default     = false
+  type        = bool
+}
+
+variable "min_tls_version" {
+  type        = string
+  description = "Minimum TLS version spec for CloudFront to accept."
+  default     = "TLSv1.1_2016"
 }
