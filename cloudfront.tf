@@ -85,7 +85,7 @@ resource "aws_cloudfront_distribution" "translations_at_root" {
 
   viewer_certificate {
     acm_certificate_arn = "%{ if var.acm_cert_arn == "" }${aws_acm_certificate.dynamic_cert[0].arn}%{ else }${var.acm_cert_arn}%{ endif }"
-    minimum_protocol_version = "TLSv1.1_2016"
+    minimum_protocol_version = var.min_tls_version
     ssl_support_method = "sni-only"
   }
 }
