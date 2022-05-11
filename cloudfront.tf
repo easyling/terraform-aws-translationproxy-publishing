@@ -211,7 +211,7 @@ resource "aws_cloudfront_distribution" "translation_at_prefix" {
       ]
 
       forwarded_values {
-        query_string = true
+        query_string = var.forward_query_strings
         cookies {
           forward = "all"
         }
