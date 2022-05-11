@@ -42,6 +42,11 @@ resource "aws_cloudfront_distribution" "translations_at_root" {
         "X-TranslationProxy-CrawlingFor",
       ]
     }
+
+    lambda_function_association {
+      event_type = "origin-request"
+      lambda_arn = aws_lambda_function.domain_classifier.qualified_arn
+    }
   }
 
   origin {
